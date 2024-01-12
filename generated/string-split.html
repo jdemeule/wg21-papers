@@ -488,12 +488,12 @@ allow very simple usage like those ones:</p>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">constexpr</span> <span class="kw">auto</span> str_view <span class="op">=</span> <span class="st">&quot;the quick brown fox&quot;</span><span class="bu">sv</span>;</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>str_view <span class="op">|</span> ranges<span class="op">::</span>views<span class="op">::</span>split<span class="op">(</span><span class="ch">&#39; &#39;</span><span class="op">)</span> <span class="op">|</span> ranges<span class="op">::</span>views<span class="op">::</span>transform<span class="op">(</span>fct_on_str<span class="op">)</span>;</span></code></pre></div>
-<p>This is very coherent of what a developer expect when doing split.
+<p>This is very coherent of what a developer expects when doing a split.
 For us, if <code class="sourceCode cpp">std<span class="op">::</span>ranges<span class="op">::</span>views<span class="op">::</span>split</code>
-is applied on a string like container, the result of it should be
-compatible with a string like. This simplify the code, reduce the learn
-overhead, it is conceptually right. In the same way, materializing the
-string should be natural as constructing it.</p>
+is applied on a string-like container, the result of it should be
+compatible with a string-like. This simplifies the code, reduces the
+learning overhead, it is conceptually right. In the same way,
+materializing the string should be as natural as constructing it.</p>
 <p>However, with <span class="citation" data-cites="P2499R0">[<a href="#ref-P2499R0" role="doc-biblioref">P2499R0</a>]</span>, <code class="sourceCode cpp">std<span class="op">::</span>string_view</code>
 range construction is now explicit, which made the previous example
 erroneous. Some additional steps are now needed to be equivalent:</p>
@@ -513,21 +513,23 @@ erroneous. Some additional steps are now needed to be equivalent:</p>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>         <span class="cf">return</span> std<span class="op">::</span>string<span class="op">(</span>std<span class="op">::</span>from_range_t<span class="op">{}</span>, s<span class="op">)</span>;</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>      <span class="op">})</span> <span class="op">|</span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>      ranges<span class="op">::</span>to<span class="op">&lt;</span>std<span class="op">::</span>vector<span class="op">&lt;</span>std<span class="op">::</span>string<span class="op">&gt;&gt;()</span>;</span></code></pre></div>
-<p>After some research, C++ will be one of the few language (or the only
-one) that splitting a string does not return a string. This paper try to
-get back the original behavior without breaking the fix done by <span class="citation" data-cites="P2499R0">[<a href="#ref-P2499R0" role="doc-biblioref">P2499R0</a>]</span>.</p>
+<p>After some research, C++ will be one of the few languages (or the
+only one) that splitting a string does not return a string. This paper
+try to get back the original behavior without breaking the fix done by
+<span class="citation" data-cites="P2499R0">[<a href="#ref-P2499R0" role="doc-biblioref">P2499R0</a>]</span>.</p>
 <h1 data-number="2" id="design"><span class="header-section-number">2</span> Design<a href="#design" class="self-link"></a></h1>
-<p>First we consider the split algorithm on string object is not an edge
-case. So we could keep the information that the split is done on a
+<p>First we consider the split algorithm on a string object is not an
+edge case. So we could keep the information that the split is done on a
 string-like object
 (<code class="sourceCode cpp">std<span class="op">::</span>string</code>,
 <code class="sourceCode cpp">std<span class="op">::</span>string_view</code>)
 and provide an implicit conversion on the result of the string.</p>
-<p>This could by done by modifying the <code class="sourceCode cpp">split<span class="op">::</span>iterator<span class="op">::</span>value_type</code>
-to return a object that is implicitely convertible to string_view or a
-subrange as before.</p>
+<p>This could be done by modifying the <code class="sourceCode cpp">split<span class="op">::</span>iterator<span class="op">::</span>value_type</code>
+to return an object that is implicitly convertible to
+<code class="sourceCode cpp">string_view</code> or a
+<code class="sourceCode cpp">subrange</code> as before.</p>
 <h1 data-number="3" id="proposal"><span class="header-section-number">3</span> Proposal<a href="#proposal" class="self-link"></a></h1>
-<p>This paper propose to introduce some helper traits to detect what is
+<p>This paper proposes to introduce some helper traits to detect what is
 a <code class="sourceCode cpp"><em>string-like</em></code> type, a
 concept to activate the feature and a dedicated
 <code class="sourceCode cpp">value_type</code> for <code class="sourceCode cpp">split<span class="op">::</span>iterator</code> in
@@ -565,8 +567,8 @@ it:</p>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">class</span> R<span class="op">&gt;</span></span>
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> string_detector_traits<span class="op">&lt;</span>ref_view<span class="op">&lt;</span>R<span class="op">&gt;&gt;</span> <span class="op">:</span> <span class="kw">public</span> string_detector_traits<span class="op">&lt;</span>R<span class="op">&gt;</span> <span class="op">{}</span>;</span></code></pre></div>
-<p><em>Editor note: this traits could be a customization point for
-string-like object outside those the standard provide.</em></p>
+<p><em>Editor note: this trait could be a customization point for
+string-like objects outside those the standard provides.</em></p>
 <h2 data-number="3.4" id="string_like_subrange"><span class="header-section-number">3.4</span> string_like_subrange<a href="#string_like_subrange" class="self-link"></a></h2>
 <p>And finally the returned value of split in the case of a
 <code class="sourceCode cpp"><em>string-like</em></code> object could
@@ -580,7 +582,7 @@ be:</p>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>   <span class="op">}</span></span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span></code></pre></div>
 <h1 data-number="4" id="alternative"><span class="header-section-number">4</span> Alternative<a href="#alternative" class="self-link"></a></h1>
-<p>Another approach is to provide dedicated string split instead ofthe
+<p>Another approach is to provide dedicated string split instead of the
 general <code class="sourceCode cpp">ranges<span class="op">::</span>views<span class="op">::</span>split</code>.
 A simple implementation of that could be:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> std<span class="op">::</span>ranges<span class="op">::</span>views <span class="op">{</span></span>

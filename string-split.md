@@ -32,10 +32,10 @@ str_view | ranges::views::split(' ') | ranges::views::transform(fct_on_str);
 ```
 
 
-This is very coherent of what a developer expect when doing split.
-For us, if `std::ranges::views::split`{.cpp} is applied on a string like container, the result of it should be compatible with a string like.
-This simplify the code, reduce the learn overhead, it is conceptually right.
-In the same way, materializing the string should be natural as constructing it.
+This is very coherent of what a developer expects when doing a split.
+For us, if `std::ranges::views::split`{.cpp} is applied on a string-like container, the result of it should be compatible with a string-like.
+This simplifies the code, reduces the learning overhead, it is conceptually right.
+In the same way, materializing the string should be as natural as constructing it.
 
 However, with [@P2499R0], `std::string_view`{.cpp} range construction is now explicit, which made the previous example erroneous. Some additional steps are now needed to be equivalent:
 
@@ -61,17 +61,17 @@ str | ranges::views::split(' ') |
       ranges::to<std::vector<std::string>>();
 ```
 
-After some research, C++ will be one of the few language (or the only one) that splitting a string does not return a string.
+After some research, C++ will be one of the few languages (or the only one) that splitting a string does not return a string.
 This paper try to get back the original behavior without breaking the fix done by [@P2499R0].
 
 # Design
 
-First we consider the split algorithm on string object is not an edge case. So we could keep the information that the split is done on a string-like object (`std::string`{.cpp}, `std::string_view`{.cpp}) and provide an implicit conversion on the result of the string.
+First we consider the split algorithm on a string object is not an edge case. So we could keep the information that the split is done on a string-like object (`std::string`{.cpp}, `std::string_view`{.cpp}) and provide an implicit conversion on the result of the string.
 
-This could by done by modifying the `split::iterator::value_type`{.cpp} to return a object that is implicitely convertible to string_view or a subrange as before.
+This could be done by modifying the `split::iterator::value_type`{.cpp} to return an object that is implicitly convertible to `string_view`{.cpp} or a `subrange`{.cpp} as before.
 
 # Proposal
-This paper propose to introduce some helper traits to detect what is a `@_string-like_@`{.cpp} type, a concept to activate the feature and a dedicated `value_type`{.cpp} for `split::iterator`{.cpp} in that case.
+This paper proposes to introduce some helper traits to detect what is a `@_string-like_@`{.cpp} type, a concept to activate the feature and a dedicated `value_type`{.cpp} for `split::iterator`{.cpp} in that case.
 
 ## split_view::iterator
 
@@ -113,7 +113,7 @@ template <class R>
 struct string_detector_traits<ref_view<R>> : public string_detector_traits<R> {};
 ```
 
-_Editor note: this traits could be a customization point for string-like object outside those the standard provide._
+_Editor note: this trait could be a customization point for string-like objects outside those the standard provides._
 
 ## string_like_subrange
 And finally the returned value of split in the case of a `@_string-like_@`{.cpp} object could be:
@@ -131,7 +131,7 @@ struct string_like_subrange : public subrange<I> {
 
 # Alternative
 
-Another approach is to provide dedicated string split instead ofthe general `ranges::views::split`{.cpp}.
+Another approach is to provide dedicated string split instead of the general `ranges::views::split`{.cpp}.
 A simple implementation of that could be:
 ```cpp
 namespace std::ranges::views {
