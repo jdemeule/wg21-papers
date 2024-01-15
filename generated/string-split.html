@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="mpark/wg21" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <meta name="dcterms.date" content="2024-01-14" />
+  <meta name="dcterms.date" content="2024-01-15" />
   <title>Result of string \| views::split should be usable with
 string_view</title>
   <style>
@@ -429,7 +429,7 @@ views::split should be usable with string_view</h1>
   </tr>
   <tr>
     <td>Date:</td>
-    <td>2024-01-14</td>
+    <td>2024-01-15</td>
   </tr>
   <tr>
     <td style="vertical-align:top">Project:</td>
@@ -475,10 +475,10 @@ Acknowledgments<span></span></a></li>
 <p><span class="citation" data-cites="P2210R2">[<a href="#ref-P2210R2" role="doc-biblioref">P2210R2</a>]</span> simplified a lot string
 splitting. Thanks to Barry Revzin’s work, the contiguous property of a
 string is kept during split. There was a question about the reference
-type of the operation and the question was resolved by <span class="citation" data-cites="P1989R2">[<a href="#ref-P1989R2" role="doc-biblioref">P1989R2</a>]</span> that introduce range
+type of the operation and the question was resolved by <span class="citation" data-cites="P1989R2">[<a href="#ref-P1989R2" role="doc-biblioref">P1989R2</a>]</span> that introduced range
 constructor on <code class="sourceCode cpp">std<span class="op">::</span>string_view</code>.
 Indeed, the range constructor of <code class="sourceCode cpp">std<span class="op">::</span>string_view</code>
-allow very simple usage like those ones:</p>
+allows very simple usage like these ones:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>std<span class="op">::</span><span class="dt">size_t</span> fct_on_str<span class="op">(</span>std<span class="op">::</span>string_view some_str<span class="op">)</span>;</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -537,8 +537,8 @@ examples of string splitting on some other languages:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">String</span> s <span class="op">=</span> <span class="st">&quot;a,b,c&quot;</span><span class="op">;</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">String</span><span class="op">[]</span> expected1 <span class="op">=</span> <span class="kw">new</span> <span class="bu">String</span><span class="op">[]</span> <span class="op">{</span> <span class="st">&quot;a&quot;</span><span class="op">,</span> <span class="st">&quot;b&quot;</span><span class="op">,</span> <span class="st">&quot;c&quot;</span> <span class="op">};</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">assertArrayEquals</span><span class="op">(</span>expected1<span class="op">,</span> s<span class="op">.</span><span class="fu">split</span><span class="op">(</span><span class="st">&quot;,&quot;</span><span class="op">));</span></span></code></pre></div>
-<p>This paper try to get back the original behavior without breaking the
-fix done by <span class="citation" data-cites="P2499R0">[<a href="#ref-P2499R0" role="doc-biblioref">P2499R0</a>]</span>.</p>
+<p>This paper attempts to get back to the original behavior without
+breaking the fix done by <span class="citation" data-cites="P2499R0">[<a href="#ref-P2499R0" role="doc-biblioref">P2499R0</a>]</span>.</p>
 <h1 data-number="2" id="design"><span class="header-section-number">2</span> Design<a href="#design" class="self-link"></a></h1>
 <p>First we consider the split algorithm on a string object is not an
 edge case. So we could keep the information that the split is done on a
@@ -580,7 +580,7 @@ it:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">class</span> T<span class="op">&gt;</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> string_detector_traits;</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">class</span> Char, <span class="kw">class</span> Traits<span class="op">&gt;</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> string_detector_traits<span class="op">&lt;</span>fsl<span class="op">::</span>basic_string_view<span class="op">&lt;</span>Char, Traits<span class="op">&gt;&gt;</span> <span class="op">{</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> string_detector_traits<span class="op">&lt;</span>std<span class="op">::</span>basic_string_view<span class="op">&lt;</span>Char, Traits<span class="op">&gt;&gt;</span> <span class="op">{</span></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>   <span class="kw">using</span> type <span class="op">=</span> Traits;</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">class</span> Char, <span class="kw">class</span> Traits<span class="op">&gt;</span></span>
@@ -619,7 +619,8 @@ A simple implementation of that could be:</p>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>;</span>
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h1 data-number="5" id="acknowledgments"><span class="header-section-number">5</span> Acknowledgments<a href="#acknowledgments" class="self-link"></a></h1>
-<p>Thanks to Raoul Borges for the feedback.</p>
+<p>Thanks to Raoul Borges for the feedback.<br> Thanks to Benoit De
+Backer for the corrections.</p>
 <h1 data-number="6" id="bibliography"><span class="header-section-number">6</span> References<a href="#bibliography" class="self-link"></a></h1>
 <div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
 <div id="ref-P1989R2" class="csl-entry" role="doc-biblioentry">

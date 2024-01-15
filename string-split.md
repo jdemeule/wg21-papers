@@ -14,8 +14,8 @@ tag: ranges
 
 [@P2210R2] simplified a lot string splitting.
 Thanks to Barry Revzin's work, the contiguous property of a string is kept during split.
-There was a question about the reference type of the operation and the question was resolved by [@P1989R2] that introduce range constructor on `std::string_view`{.cpp}.
-Indeed, the range constructor of `std::string_view`{.cpp} allow very simple usage like those ones:
+There was a question about the reference type of the operation and the question was resolved by [@P1989R2] that introduced range constructor on `std::string_view`{.cpp}.
+Indeed, the range constructor of `std::string_view`{.cpp} allows very simple usage like these ones:
 
 ```cpp
 std::size_t fct_on_str(std::string_view some_str);
@@ -94,7 +94,7 @@ String[] expected1 = new String[] { "a", "b", "c" };
 assertArrayEquals(expected1, s.split(","));
 ```
 
-This paper try to get back the original behavior without breaking the fix done by [@P2499R0].
+This paper attempts to get back to the original behavior without breaking the fix done by [@P2499R0].
 
 # Design
 
@@ -134,7 +134,7 @@ The `string_detector_traits` is a simple traits to detect string and extract the
 template <class T>
 struct string_detector_traits;
 template <class Char, class Traits>
-struct string_detector_traits<fsl::basic_string_view<Char, Traits>> {
+struct string_detector_traits<std::basic_string_view<Char, Traits>> {
    using type = Traits;
 };
 template <class Char, class Traits>
@@ -181,4 +181,5 @@ inline constexpr __adaptor::_RangeAdaptor string_split =
 
 # Acknowledgments
 
-Thanks to Raoul Borges for the feedback.
+Thanks to Raoul Borges for the feedback.<br>
+Thanks to Benoit De Backer for the corrections.
