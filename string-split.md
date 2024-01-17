@@ -51,8 +51,12 @@ auto s2 = str_view
    | ranges::views::transform(fct_on_str);
 ```
 
-Same, when we need to materialize a string:
+Same, when we need to store the result to a `vector`{.cpp}:
 ```cpp
+auto w1 = str
+   | ranges::views::split(' ')
+   | ranges::views::transform([](auto s) { return std::string_view(s); })
+   | ranges::to<std::vector<std::string_view>>();
 auto w2 = str 
    | ranges::views::split(' ')
    | ranges::views::transform([](auto s) { return std::string(std::from_range_t{}, s); })
@@ -181,5 +185,5 @@ inline constexpr __adaptor::_RangeAdaptor string_split =
 
 # Acknowledgments
 
-Thanks to Raoul Borges for the feedback.<br>
+Thanks to Raoul Borges and Loïc Joly for the feedback.<br>
 Thanks to Benoit De Backer for the corrections.

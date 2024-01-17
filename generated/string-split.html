@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="mpark/wg21" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <meta name="dcterms.date" content="2024-01-15" />
+  <meta name="dcterms.date" content="2024-01-17" />
   <title>Result of string \| views::split should be usable with
 string_view</title>
   <style>
@@ -429,7 +429,7 @@ views::split should be usable with string_view</h1>
   </tr>
   <tr>
     <td>Date:</td>
-    <td>2024-01-15</td>
+    <td>2024-01-17</td>
   </tr>
   <tr>
     <td style="vertical-align:top">Project:</td>
@@ -512,11 +512,16 @@ erroneous. Some additional steps are now needed to be equivalent:</p>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>   <span class="op">|</span> ranges<span class="op">::</span>views<span class="op">::</span>split<span class="op">(</span><span class="ch">&#39; &#39;</span><span class="op">)</span></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>   <span class="op">|</span> ranges<span class="op">::</span>views<span class="op">::</span>transform<span class="op">([](</span><span class="kw">auto</span> s<span class="op">)</span> <span class="op">{</span> <span class="cf">return</span> std<span class="op">::</span>string_view<span class="op">(</span>s<span class="op">)</span>; <span class="op">})</span></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>   <span class="op">|</span> ranges<span class="op">::</span>views<span class="op">::</span>transform<span class="op">(</span>fct_on_str<span class="op">)</span>;</span></code></pre></div>
-<p>Same, when we need to materialize a string:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> w2 <span class="op">=</span> str </span>
+<p>Same, when we need to store the result to a
+<code class="sourceCode cpp">vector</code>:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> w1 <span class="op">=</span> str</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>   <span class="op">|</span> ranges<span class="op">::</span>views<span class="op">::</span>split<span class="op">(</span><span class="ch">&#39; &#39;</span><span class="op">)</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>   <span class="op">|</span> ranges<span class="op">::</span>views<span class="op">::</span>transform<span class="op">([](</span><span class="kw">auto</span> s<span class="op">)</span> <span class="op">{</span> <span class="cf">return</span> std<span class="op">::</span>string<span class="op">(</span>std<span class="op">::</span>from_range_t<span class="op">{}</span>, s<span class="op">)</span>; <span class="op">})</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>   <span class="op">|</span> ranges<span class="op">::</span>to<span class="op">&lt;</span>std<span class="op">::</span>vector<span class="op">&lt;</span>std<span class="op">::</span>string<span class="op">&gt;&gt;()</span>;</span></code></pre></div>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>   <span class="op">|</span> ranges<span class="op">::</span>views<span class="op">::</span>transform<span class="op">([](</span><span class="kw">auto</span> s<span class="op">)</span> <span class="op">{</span> <span class="cf">return</span> std<span class="op">::</span>string_view<span class="op">(</span>s<span class="op">)</span>; <span class="op">})</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>   <span class="op">|</span> ranges<span class="op">::</span>to<span class="op">&lt;</span>std<span class="op">::</span>vector<span class="op">&lt;</span>std<span class="op">::</span>string_view<span class="op">&gt;&gt;()</span>;</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> w2 <span class="op">=</span> str </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>   <span class="op">|</span> ranges<span class="op">::</span>views<span class="op">::</span>split<span class="op">(</span><span class="ch">&#39; &#39;</span><span class="op">)</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>   <span class="op">|</span> ranges<span class="op">::</span>views<span class="op">::</span>transform<span class="op">([](</span><span class="kw">auto</span> s<span class="op">)</span> <span class="op">{</span> <span class="cf">return</span> std<span class="op">::</span>string<span class="op">(</span>std<span class="op">::</span>from_range_t<span class="op">{}</span>, s<span class="op">)</span>; <span class="op">})</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>   <span class="op">|</span> ranges<span class="op">::</span>to<span class="op">&lt;</span>std<span class="op">::</span>vector<span class="op">&lt;</span>std<span class="op">::</span>string<span class="op">&gt;&gt;()</span>;</span></code></pre></div>
 <p>After some research, it seems C++ will be one of the few languages
 (or the only one) that splitting a string does not return a string. Some
 examples of string splitting on some other languages:</p>
@@ -619,8 +624,8 @@ A simple implementation of that could be:</p>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>;</span>
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h1 data-number="5" id="acknowledgments"><span class="header-section-number">5</span> Acknowledgments<a href="#acknowledgments" class="self-link"></a></h1>
-<p>Thanks to Raoul Borges for the feedback.<br> Thanks to Benoit De
-Backer for the corrections.</p>
+<p>Thanks to Raoul Borges and Loïc Joly for the feedback.<br> Thanks to
+Benoit De Backer for the corrections.</p>
 <h1 data-number="6" id="bibliography"><span class="header-section-number">6</span> References<a href="#bibliography" class="self-link"></a></h1>
 <div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
 <div id="ref-P1989R2" class="csl-entry" role="doc-biblioentry">
